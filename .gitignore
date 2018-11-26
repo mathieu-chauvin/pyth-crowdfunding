@@ -1,2 +1,2 @@
-truffle/build/
+truffle/build/*
 truffle/truffle-config.js
