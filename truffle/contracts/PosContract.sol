@@ -48,4 +48,4 @@ contract PosContract {
         revert();
     }
 
-
+}
