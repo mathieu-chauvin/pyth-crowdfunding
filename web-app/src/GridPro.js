@@ -1,20 +1,16 @@
 import React, { Component } from 'react';
 
-import {Grid, Segment} from 'semantic-ui-react';
+import {Grid, Segment, Card} from 'semantic-ui-react';
 import Miniature from './Miniature.js';
 
 let GridElement = () =>  (
-        <Grid.Column>
-            <Segment>
-                <Miniature/>
-            </Segment>
-        </Grid.Column>
+                <Miniature />
         );
 
 class GridPro extends Component {
     render() {
         return (
-                <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle' columns={5} stackable>
+                <Card.Group centered itemsPerRow={5} stackable>
                     <GridElement/>
                     <GridElement/>
                     <GridElement/>
@@ -25,7 +21,7 @@ class GridPro extends Component {
                     <GridElement/>
                     <GridElement/>
                     <GridElement/>
-                </Grid>
+                </Card.Group>
                    )
                 }
 }
