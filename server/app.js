@@ -35,13 +35,32 @@ router.get("/getProfiles", (req, res) => {
     });
 });
 
+//this is our get method
+//this method fetches all available data in our database
+router.get("/getProfile", (req, res) => {
+    const id = req.param.id;
+    Data.findById(id, (err, data) => {
+        if (err) return res.json({ success: false, error: err });
+        return res.json({ success: true, data: data });
+    });
+});
+
+
 //this is our update method
 //this method overwrites existing data in our database
 router.post("/updateProfile", (req, res) => {
+    console.log('Update : '+req);
     const { id, update } = req.body;
-    Data.findOneAndUpdate(id, update, err => {
+    
+Data.findOneAndUpdate(id, update, (err,doc) => {
         if (err) return res.json({ success: false, error: err });
-        return res.json({ success: true });
+        if (!doc) {
+          Data.create(update)
+              .then(() => {return res.json({ success: true }); }); 
+        }
+        else {
+            return res.json({ success: true });
+        }
     });
 });
 
