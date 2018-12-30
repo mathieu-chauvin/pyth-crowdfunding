@@ -12,9 +12,9 @@ class Profile extends Component {
             name:'',
             firstName:'',
             pseudo:'',
-            defaultPseudo:'',
-            defaultFirstName:'',
-            defaultName:''
+            defaultPseudo:'undefined',
+            defaultFirstName:'undefined',
+            defaultName:'undefined'
         };
     }
 
@@ -54,9 +54,9 @@ class Profile extends Component {
                      update:updateObj 
              }}).then(()=>{
            this.setState({
-            defaultPseudo : this.state.pseudo,
-            defaultName : this.state.name,
-            defaultFirstName : this.state.firstName
+               defaultPseudo : this.state.pseudo.length > 0 ? this.state.pseudo : 'pseudoUndefined',
+            defaultName : this.state.name.length > 0 ? this.state.name : 'nameUndefined',
+            defaultFirstName : this.state.firstName.length > 0 ? this.state.firstName : 'firstNameUndefined'
            });
         })
            .catch(function (error) {
@@ -67,7 +67,7 @@ class Profile extends Component {
     render() {
        return (
 <Container id="display-profile" style={{width:'40%', margin:'auto'}}>
-<p>{this.state.defaultPseudo}, {this.state.defaultFirstName}, {this.state.defaultName}</p>
+<p> Hello {this.state.defaultPseudo || undefined} ({this.state.defaultFirstName} {this.state.defaultName})</p>
                 <Form onSubmit={this.handleSubmit}>
                 <Form.Field inline>Your ethereum adress : <strong>{this.context.web3.selectedAccount}</strong></Form.Field>
                 <Form.Field inline>Pseudo : <Input onChange={this.handleChange} name='pseudo' value={this.state.pseudo}  /></Form.Field>

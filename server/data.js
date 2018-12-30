@@ -8,7 +8,7 @@ const UserSchema = new Schema(
             _id: String,
             pseudo: String,
             name: String,
-            firstname: String
+            firstName: String
         }
         );
 
