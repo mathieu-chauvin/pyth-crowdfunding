@@ -3,7 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const logger = require("morgan");
 const Data = require("./data");
-
+const cors = require('cors');
 const API_PORT = 3001;
 const app = express();
 const router = express.Router();
@@ -25,7 +25,7 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(logger("dev"));
-
+app.use(cors());
 //this is our get method
 //this method fetches all available data in our database
 router.get("/getProfiles", (req, res) => {
@@ -49,8 +49,10 @@ router.get("/getProfile", (req, res) => {
 //this is our update method
 //this method overwrites existing data in our database
 router.post("/updateProfile", (req, res) => {
+    console.log('body:'+JSON.stringify(req.body));
     const { id, update} = req.body;
-    let updateObj=JSON.parse(update);
+    console.log('id:'+id+' UpdatePre : '+update);
+    let updateObj=update;
         //.catch((e) => {console.log(e);  return res.json({ success: false, error: err })});
     console.log('Update : '+JSON.stringify(updateObj));
 Data.findOneAndUpdate({_id:id}, updateObj, {new:true}, (err,doc) => {

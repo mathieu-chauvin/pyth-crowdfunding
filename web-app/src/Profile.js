@@ -3,40 +3,62 @@ import React, { Component } from 'react';
 import {Button, Form,Container, Input} from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-var route = 'localhost:3001'
+var route = 'http://localhost:3001'
 
 class Profile extends Component {
-    componentWillMount() {
-        this.setState({
+    constructor(props) {
+        super(props);
+        this.state= {
             name:'',
             firstName:'',
-            pseudo:''
-        });
+            pseudo:'',
+            defaultPseudo:'',
+            defaultFirstName:'',
+            defaultName:''
+        };
     }
 
     componentDidMount() {
-        axios.get(route+'/getProfile?id='+this.context.web3.selectedAccount)
+
+        axios.get(route+'/api/getProfile?id='+this.context.web3.selectedAccount)
             .then((res) => {
-                this.setState({name:res.data.name,
-                firstName:res.data.firstName,
-                pseudo:res.data.pseudo});
+                console.log('resProfile:'+JSON.stringify(res));
+                
+                this.setState({defaultName:res.data.data.name,
+                    defaultFirstName:res.data.data.firstName,
+                    defaultPseudo:res.data.data.pseudo});
+                console.log('state:'+JSON.stringify(this.state));
             }).catch(function (error) {
                 console.log(error);
             });
+
+        
     }
-
-
+    
+    
 
     handleChange = (e, { name, value }) => this.setState({ [name]: value });
 
     handleSubmit = () => {
-       axios.post(route+'/updateProfile',{
-            id:this.context.web3.selectedAccount,
+        let updateObj = {
             pseudo:this.state.pseudo,
             name:this.state.name,
             firstName:this.state.firstName
-       })
-       .then(()=>{console.log('Success')})
+       };
+        axios({
+           method: 'post',
+          // headers : {'Content-Type': 'application/x-www-form-urlencoded'},
+            url: route+'/api/updateProfile',
+             data: {
+                   id: this.context.web3.selectedAccount,
+                     update:updateObj 
+             }}).then(()=>{
+           this.setState({
+            defaultPseudo : this.state.pseudo,
+            defaultName : this.state.name,
+            defaultFirstName : this.state.firstName
+           });
+        })
            .catch(function (error) {
                console.log(error);
            });
@@ -45,9 +67,10 @@ class Profile extends Component {
     render() {
        return (
 <Container id="display-profile" style={{width:'40%', margin:'auto'}}>
+<p>{this.state.defaultPseudo}, {this.state.defaultFirstName}, {this.state.defaultName}</p>
                 <Form onSubmit={this.handleSubmit}>
                 <Form.Field inline>Your ethereum adress : <strong>{this.context.web3.selectedAccount}</strong></Form.Field>
-                <Form.Field inline>Pseudo : <Input onChange={this.handleChange} name='pseudo' value={this.state.pseudo} /></Form.Field>
+                <Form.Field inline>Pseudo : <Input onChange={this.handleChange} name='pseudo' value={this.state.pseudo}  /></Form.Field>
                 <Form.Field inline>First Name : <Input onChange={this.handleChange} name='firstName' value={this.state.firstName}/></Form.Field>
                 <Form.Field inline>Name : <Input onChange={this.handleChange}  name='name' value={this.state.name}/></Form.Field>
                <Form.Button type="submit">Submit</Form.Button> 
