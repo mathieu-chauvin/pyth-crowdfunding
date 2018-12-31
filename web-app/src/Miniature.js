@@ -16,7 +16,6 @@ class Miniature extends Component {
                 </Card.Content>
                 <Card.Content extra>
                 <b style={{textAlign:'center',fontSize:'28px'}}>10000 PTH</b><br/>
-                <Button><Icon name='money bill alternate'/></Button>
                 </Card.Content>
                 </Card>
                );
