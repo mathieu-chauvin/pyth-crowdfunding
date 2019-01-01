@@ -5,14 +5,14 @@ import "./PosContract.sol";
 import "./SafeMath.sol";
 
 /**
- * @title Proof of stake 
+ * @title StockContract
  *
  */
 contract StockContract {
     using SafeMath for uint256;
 
-    PythiContract pyC;
-    PosContract posC;
+    PythiContract public pyC;
+    PosContract public posC;
 
     //  idOfObject => pythHolderAddress => value
     mapping (uint256 => mapping(address => uint256)) public _stakes;
@@ -43,8 +43,8 @@ contract StockContract {
         pyC.transfer(msg.sender, amount);
     }
 
-    function getReward(uint256 idProject) public returns bool{
-        require(posC.isValidated(idProject, msg.sender))
+    function getReward(uint256 idProject) public returns (bool) {
+        require(posC.isValidated(idProject, msg.sender));
         uint256 amount = _totalStakes[idProject];
         _totalStakes[idProject] = 0;
         pyC.transfer(msg.sender, amount);
