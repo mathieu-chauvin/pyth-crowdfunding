@@ -20,7 +20,7 @@ class Profile extends Component {
 
     componentDidMount() {
 
-        axios.get(route+'/api/getProfile?id='+this.context.web3.selectedAccount)
+        axios.get(route+'/api/profile/getProfile?id='+this.context.web3.selectedAccount)
             .then((res) => {
                 console.log('resProfile:'+JSON.stringify(res));
                 
@@ -48,7 +48,7 @@ class Profile extends Component {
         axios({
            method: 'post',
           // headers : {'Content-Type': 'application/x-www-form-urlencoded'},
-            url: route+'/api/updateProfile',
+            url: route+'/api/profile/updateProfile',
              data: {
                    id: this.context.web3.selectedAccount,
                      update:updateObj 
