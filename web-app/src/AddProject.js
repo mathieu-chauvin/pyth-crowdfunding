@@ -21,14 +21,14 @@ class AddProject extends Component {
     handleSubmit = () => {
         let updateObj = {
             name:this.state.name,
-            description:this.state.description
+            description:this.state.description,
+           owner: this.context.web3.selectedAccount
        };
         axios({
            method: 'post',
           // headers : {'Content-Type': 'application/x-www-form-urlencoded'},
             url: route+'/api/project/updateProject',
              data: {
-                   id: this.context.web3.selectedAccount,
                      update:updateObj 
              }}).then(()=>{
            this.setState({

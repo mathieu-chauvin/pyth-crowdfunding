@@ -42,7 +42,6 @@ router.get("/getProject", (req, res) => {
 router.post("/updateProject", (req, res) => {
     console.log('body:'+JSON.stringify(req.body));
     const { id, update} = req.body;
-    console.log('id:'+id+' UpdatePre : '+update);
     let updateObj=update;
         //.catch((e) => {console.log(e);  return res.json({ success: false, error: err })});
     console.log('Update : '+JSON.stringify(updateObj));
@@ -50,7 +49,6 @@ Data.findOneAndUpdate({_id:id}, updateObj, {new:true}, (err,doc) => {
         if (err) return res.json({ success: false, error: err });
         if (!doc) {
             let newObj = updateObj;
-            newObj._id=id;
             Data.create(updateObj)
               .then((doc) => {return res.json({ success: true, mode:'created', data:JSON.stringify(doc)  });}); 
         }
@@ -65,7 +63,7 @@ Data.findOneAndUpdate({_id:id}, updateObj, {new:true}, (err,doc) => {
 router.post("/registerProject", (req, res) => {
     let data = new Data();
     console.log(JSON.stringify(req.body));
-    const { name, description } = req.body;
+    const { name, description, owner } = req.body;
     /*if ((!id && id !== 0)) {
         return res.json({
             success: false,
@@ -73,6 +71,7 @@ router.post("/registerProject", (req, res) => {
         });
     }*/
     data.description = description;
+    data.owner = owner;
     data.name = name;
     data.save(err => {
         if (err) return res.json({ success: false, error: err });
