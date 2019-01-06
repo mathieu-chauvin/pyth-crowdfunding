@@ -15,7 +15,8 @@ const ProjectSchema = new Schema(
         {
             name: String,
             description: String,
-            participants:  [{ type: String, ref: 'UserSchema' }]
+            participants:  [{ type: String, ref: 'UserSchema' }],
+            date: {type: Date, default:Date.now }
         }
         );
 
