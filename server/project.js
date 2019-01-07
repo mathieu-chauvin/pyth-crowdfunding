@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const logger = require("morgan");
 const Data = require("./data").project;
 const router = express.Router();
-
+var web3 = require('web3')
 const dbRoute = "mongodb://127.0.0.1:27017/user";
 
 mongoose.connect(dbRoute,
@@ -16,6 +16,10 @@ db.once("open", () => console.log("connected to the database"));
 
 //checks if connection with the database is successful
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
+
+// web3 initialization
+//web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/v3/2b3f64bdc98b4a14a8c65c8bd86b0fb0");
+stockAddr = "0x044788B6B14928a3355bCC1dc8e77C2A16D846E0";
 
 //this is our get method
 //this method fetches all available data in our database
