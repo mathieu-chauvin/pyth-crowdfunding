@@ -4,7 +4,7 @@ var abi = [
 		"inputs": [
 			{
 				"name": "idProject",
-				"type": "uint256"
+				"type": "address"
 			},
 			{
 				"name": "amount",
@@ -27,7 +27,7 @@ var abi = [
 		"inputs": [
 			{
 				"name": "idProject",
-				"type": "uint256"
+				"type": "address"
 			}
 		],
 		"name": "getReward",
@@ -46,7 +46,7 @@ var abi = [
 		"inputs": [
 			{
 				"name": "idProject",
-				"type": "uint256"
+				"type": "address"
 			},
 			{
 				"name": "amount",
@@ -85,7 +85,7 @@ var abi = [
 		"inputs": [
 			{
 				"name": "",
-				"type": "uint256"
+				"type": "address"
 			},
 			{
 				"name": "",
@@ -108,7 +108,7 @@ var abi = [
 		"inputs": [
 			{
 				"name": "",
-				"type": "uint256"
+				"type": "address"
 			}
 		],
 		"name": "_totalStakes",

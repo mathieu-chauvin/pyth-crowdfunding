@@ -26,13 +26,17 @@ var contract = new web3.eth.Contract(ABI, stockAddr);
 //this is our get method
 //this method fetches all available data in our database
 router.get("/getProjects", (req, res) => {
-    console.log('contract call: ' +JSON.stringify(contract.options.jsonInterface));
+    //console.log('contract call: ' +JSON.stringify(contract.options.jsonInterface));
     Data.find((err, data) => {
         if (err) return res.json({ success: false, error: err });
 
+            console.log(JSON.stringify(data));
+            console.log(JSON.stringify(data[0]));
         // ask to eth blockchain for jackpot value
-        for (d in data) {
-            contract.methods._totalStakes(d._id).call().then(console.log);
+        for (var i =0; i < data.length; i++) {
+            let d = data[i];
+            console.log(JSON.stringify(d));
+            contract.methods._totalStakes(web3.utils.sha256(d._id.toString())).call().then(console.log);
         }
         return res.json({ success: true, data: data });
     });
