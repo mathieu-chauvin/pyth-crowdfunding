@@ -11,11 +11,18 @@
  *     gasPrice: 10000000000,
  *   },
  */
-
+var HDWalletProvider = require("truffle-hdwallet-provider");
+var mnemonic = "ordinary hold evidence finish plunge travel resist agent gather window same empty";
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
   // to customize your Truffle configuration!
     networks : {
+        ropsten: {
+                provider: function() {
+                          return new HDWalletProvider(mnemonic, "https://ropsten.infura.io/v3/2b3f64bdc98b4a14a8c65c8bd86b0fb0");
+                              },
+                network_id: '3',
+                  },
         localnode: {
             network_id: "*",
             host: "localhost",

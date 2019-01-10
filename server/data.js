@@ -17,7 +17,8 @@ const ProjectSchema = new Schema(
             description: String,
             participants:  [{ type: String, ref: 'UserSchema' }],
             date: {type: Date, default:Date.now },
-            owner: String
+            owner: String,
+            jackpot :Number 
         }
         );
 
