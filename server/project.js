@@ -4,11 +4,11 @@ const bodyParser = require("body-parser");
 const logger = require("morgan");
 const Data = require("./data").project;
 const router = express.Router();
+const config = require("./config");
 var Web3 = require('web3')
-const dbRoute = "mongodb://127.0.0.1:27017/user";
 
-mongoose.connect(dbRoute,
-        {useNewUrlParser : true}
+mongoose.connect(config.dbRoute,
+    {useNewUrlParser : true}
         );
 
 let db = mongoose.connection;
@@ -19,8 +19,8 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 // web3 initialization
 var web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/v3/2b3f64bdc98b4a14a8c65c8bd86b0fb0"));
-const stockAddr = "0x6fe97564a6e2b98d404eaf253443980c4814df74";
-const ABI = require('./stockABI'); 
+const stockAddr = config.stockAddr;
+const ABI = require('../abis/stockABI'); 
 var contract = new web3.eth.Contract(ABI, stockAddr);
 //this is our get method
 //this method fetches all available data in our database
@@ -31,10 +31,10 @@ async function getFullData (data) {
         await contract.methods._totalStakes('0x'+d[i]._id.toString()).call().then((res) => {
             d[i].jackpot = res
             console.log('res:',res);
-   console.log(JSON.stringify(d[i]));
+   //console.log(JSON.stringify(d[i]));
         }); 
        }
-   console.log(JSON.stringify(d));
+   //console.log(JSON.stringify(d));
     return { success: true, data: d };
  
 }
@@ -57,7 +57,9 @@ router.get("/getProject", (req, res) => {
     const id = req.query.id;
     Data.findById(id, (err, data) => {
         if (err) return res.json({ success: false, error: err });
-        return res.json({ success: true, data: data });
+        return new Promise((resolve,reject) => {
+                getFullData([data]).then((data) => {resolve(res.json(data)) });
+        });
     });
 });
 

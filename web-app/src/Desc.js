@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
+import axios from 'axios';
 import {Table, List, Segment, Divider,Container,Card, Image, Icon, Button, Header } from 'semantic-ui-react';
+
+var route = 'http://localhost:3001'
 const TableContributors = () => (
         <Table basic>
         <Table.Header>
@@ -29,6 +31,39 @@ const TableContributors = () => (
 
 
 class Desc extends Component {
+    constructor(props){
+        super(props);
+        this.state = {project:
+            {
+                name:"",
+                description:"",
+                date:"",
+                jackpot:"",
+                participants:[],
+                contributors:[]
+            }
+        };
+    }
+    
+    componentDidMount() {
+
+        axios.get(route+'/api/project/getProject?id='+this.props.match.params.idProject)
+            .then((res) => {
+                console.log('resProfile:'+JSON.stringify(res));
+                 
+                this.setState({project : res.data.data[0]});
+                console.log('state:'+JSON.stringify(this.state));
+            }).catch(function (error) {
+                console.log(error);
+            });
+
+        
+    }
+
+    addParticipant(){
+        
+    }
+
     render() {
         return (
                 <div>
@@ -36,12 +71,12 @@ class Desc extends Component {
                 <Segment attached>
                 <Image size='medium' spaced centered src='https://react.semantic-ui.com/images/avatar/large/matthew.png' />
                 <Container textAlign='center'>
-                    <Header as='h2'>Name of project</Header>
-                    <i>Date of creation : </i><span className='date'>17 décembre 2018</span>
+                    <Header as='h2'>{this.state.project.name}</Header>
+                    <i>Date of creation : </i><span className='date'>{this.state.project.date}</span>
                     <Divider/>
                 <Button.Group size='massive' widths='2'>
                         <Button color='red' ><Icon name='money bill alternate'/>Make a deposit</Button>
-                        <Button color ='green' ><Icon name='book'/>Participate</Button>
+                        <Button onClick={this.addParticipant} color ='green' ><Icon name='book'/>Participate</Button>
                      </Button.Group>
     
                         <Divider horizontal>
@@ -50,7 +85,7 @@ class Desc extends Component {
                             Description
                         </Header>
                     </Divider>
-                    <p>Matthew is a musician living in Nashville. His cryptocurrency project is great !Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+                    <p>{this.state.project.description}</p>
                     <Divider horizontal>
                         <Header as='h4'>
                             <Icon name='tag' />
@@ -58,9 +93,10 @@ class Desc extends Component {
                            </Header>
                     </Divider>
                 <List>
-                    <List.Item>Apples</List.Item>
-                    <List.Item>Pears</List.Item>
-                    <List.Item>Oranges</List.Item>
+                {this.state.project.participants.map( (p) => {
+                                                                return <List.Item>{p.name}</List.Item>
+                                                            })}
+                    
                   </List>
                     <Divider horizontal>
                         <Header as='h4'>
@@ -68,7 +104,7 @@ class Desc extends Component {
                            Contributors
                            </Header>
                     </Divider>
-                    <i>Jackpot :</i> <b style={{textAlign:'center',fontSize:'28px'}}>10000 PTH</b>
+                    <i>Jackpot :</i> <b style={{textAlign:'center',fontSize:'28px'}}>{this.state.project.jackpot} PTH</b>
                     <TableContributors/>
                     <Divider horizontal/>
                </Container>

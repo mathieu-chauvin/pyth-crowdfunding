@@ -27,7 +27,7 @@ return (
                 <Web3Provider>
                 <Route exact path='/' component={HomePage}/>
                 <Route path='/profile/' component={Profile}/>
-                <Route path='/project/' component={Desc}/>
+                <Route path='/project/:idProject' component={Desc}/>
                 <Route path='/addProject/' component={AddProject}/>
                 </Web3Provider>
             </div>
