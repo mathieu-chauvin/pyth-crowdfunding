@@ -85,6 +85,48 @@ Data.findOneAndUpdate({_id:id}, updateObj, {new:true}, (err,doc) => {
     });
 });
 
+//this is our update method
+//this method overwrites existing data in our database
+router.post("/addParticipant", (req, res) => {
+    const { id, participant } = req.body;
+        //.catch((e) => {console.log(e);  return res.json({ success: false, error: err })});
+Data.findById(id, (err,doc) => {
+        if (err || !doc) return res.json({ success: false, error: err });
+        doc.participants.push(participant)
+        doc.save( (err, doc) => {
+            if (err || !doc) return res.json({ success: false, error: err });
+            return res.json({ success: true,data:JSON.stringify(doc) });
+        });
+    });
+});
+
+router.post("/removeParticipant", (req, res) => {
+    const { id, participant } = req.body;
+        //.catch((e) => {console.log(e);  return res.json({ success: false, error: err })});
+Data.findById(id, (err,doc) => {
+        if (err || !doc) return res.json({ success: false, error: err });
+        doc.participants.pull(participant)
+        doc.save( (err, doc) => {
+            if (err || !doc) return res.json({ success: false, error: err });
+            return res.json({ success: true,data:JSON.stringify(doc) });
+        });
+    });
+});
+
+//this is our update method
+//this method overwrites existing data in our database
+router.post("/getParticipants", (req, res) => {
+    console.log('body:'+JSON.stringify(req.body));
+    const { id } = req.body;
+        //.catch((e) => {console.log(e);  return res.json({ success: false, error: err })});
+Data.findById(id, (err,doc) => {
+        if (err || !doc) return res.json({ success: false, error: err });
+        console.log('populated :'+doc.populate('participants'));
+        return res.json({ success: true,data:JSON.stringify(doc.populate('participants')) });
+    });
+});
+
+
 //this is our create methid
 //this method adds new data in our database
 router.post("/registerProject", (req, res) => {

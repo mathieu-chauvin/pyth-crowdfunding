@@ -11,6 +11,7 @@ const UserSchema = new Schema(
             firstName: String
         }
         );
+
 const ProjectSchema = new Schema(
         {
             name: String,
