@@ -16,7 +16,8 @@ const ProjectSchema = new Schema(
         {
             name: String,
             description: String,
-            participants:  [{ type: String, ref: 'UserSchema' }],
+            participants:  [{ type: String, ref: 'User' }],
+            contributors:  [{ type: String, ref: 'User' }],
             date: {type: Date, default:Date.now },
             owner: String,
             jackpot :Number 
@@ -25,5 +26,5 @@ const ProjectSchema = new Schema(
 
 
 // export the new Schema so we could modify it using Node.js
-module.exports.user = mongoose.model("Data", UserSchema);
+module.exports.user = mongoose.model("User", UserSchema);
 module.exports.project = mongoose.model("Project", ProjectSchema);

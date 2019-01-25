@@ -2,8 +2,10 @@ const mongoose = require("mongoose");
 const express = require("express");
 const bodyParser = require("body-parser");
 const logger = require("morgan");
-const Data = require("./data").project;
+const bdd = require("./data");
+const Data = bdd.project;
 const router = express.Router();
+const User = bdd.user;
 const config = require("./config");
 var Web3 = require('web3')
 
@@ -25,7 +27,7 @@ var contract = new web3.eth.Contract(ABI, stockAddr);
 //this is our get method
 //this method fetches all available data in our database
 
-async function getFullData (data) {
+async function getBasicData (data) {
         let d = data;
    for (let i =0; i < data.length; i++) {
         await contract.methods._totalStakes('0x'+d[i]._id.toString()).call().then((res) => {
@@ -39,6 +41,44 @@ async function getFullData (data) {
  
 }
 
+
+async function getFullData (proj) {
+        console.log('proj:'+JSON.stringify(proj));
+        var projRes = {
+            _id : proj._id,
+            name: proj.name,
+            description: proj.description,
+            participants:  proj.participants,
+            contributors:  {},
+            date: proj.date,
+            owner:proj.owner,
+            jackpot :0
+        };
+        console.log('projres:'+JSON.stringify(projRes));
+
+        // get Jackpot
+        await contract.methods._totalStakes('0x'+projRes._id).call().then((res) => {
+            projRes.jackpot = res
+        });
+
+        //get contributors with their contribution
+        projRes.contributors = []
+            let mapProj = new Map();
+           console.log('projres:'+JSON.stringify(projRes));
+            for (let i =0; i < proj.contributors.length; i++) {
+           console.log('contributor '+i);
+           let contributor = proj.contributors[i]._id; 
+            await contract.methods._stakes('0x'+projRes._id, contributor).call().then((res) => {
+               console.log(JSON.stringify('c:'+res));
+                projRes.contributors[i] = {_id:contributor, name: proj.contributors[i].name, pseudo: proj.contributors[i].pseudo, firstName: proj.contributors[i].name, contribution:res};
+            });
+
+        }
+
+       return { success: true, data: projRes};
+ 
+}
+
 router.get("/getProjects", (req, res) => {
     //console.log('contract call: ' +JSON.stringify(contract.options.jsonInterface));
     Data.find((err, data) => {
@@ -46,7 +86,7 @@ router.get("/getProjects", (req, res) => {
 
         // ask to eth blockchain for jackpot value
         return new Promise((resolve,reject) => {
-                getFullData(data).then((data) => {resolve(res.json(data)) });
+                getBasicData(data).then((data) => {resolve(res.json(data)) });
         });
     });
 });
@@ -55,10 +95,10 @@ router.get("/getProjects", (req, res) => {
 //this method fetches all available data in our database
 router.get("/getProject", (req, res) => {
     const id = req.query.id;
-    Data.findById(id, (err, data) => {
-        if (err) return res.json({ success: false, error: err });
+    Data.findById(id).populate('participants').populate('contributors').exec( (err, data) => {
+        if (err || !data) return res.json({ success: false, error: err });
         return new Promise((resolve,reject) => {
-                getFullData([data]).then((data) => {resolve(res.json(data)) });
+                getFullData(data).then((data) => {resolve(res.json(data)) });
         });
     });
 });
@@ -85,6 +125,49 @@ Data.findOneAndUpdate({_id:id}, updateObj, {new:true}, (err,doc) => {
     });
 });
 
+//this is our update method
+//this method overwrites existing data in our database
+router.post("/addContributor", (req, res) => {
+    const { id, contributor } = req.body;
+        //.catch((e) => {console.log(e);  return res.json({ success: false, error: err })});
+Data.findById(id, (err,doc) => {
+        if (err || !doc) return res.json({ success: false, error: err });
+        doc.contributors.push(contributor)
+        doc.save( (err, doc) => {
+            if (err || !doc) return res.json({ success: false, error: err });
+            return res.json({ success: true,data:JSON.stringify(doc) });
+        });
+    });
+});
+
+router.post("/removeContributor", (req, res) => {
+    const { id, contributor } = req.body;
+        //.catch((e) => {console.log(e);  return res.json({ success: false, error: err })});
+Data.findById(id, (err,doc) => {
+        if (err || !doc) return res.json({ success: false, error: err });
+        doc.contributors.pull(contributor)
+        doc.save( (err, doc) => {
+            if (err || !doc) return res.json({ success: false, error: err });
+            return res.json({ success: true,data:JSON.stringify(doc) });
+        });
+    });
+});
+
+//this is our update method
+//this method overwrites existing data in our database
+router.post("/getContributors", (req, res) => {
+    console.log('body:'+JSON.stringify(req.body));
+    const id = req.query.id;
+    Data.findById(id, (err,doc) => {
+        if (err || !doc) return res.json({ success: false, error: err });
+        console.log('going to populate '+JSON.stringify(doc))
+        doc.populate('contributors').exec(  (err, doc) => {
+                if (err || !doc) return res.json({ success: false, error: err });
+                console.log('populated :'+doc);
+            return res.json({ success: true,data:JSON.stringify(doc) });
+            });
+    });
+});
 //this is our update method
 //this method overwrites existing data in our database
 router.post("/addParticipant", (req, res) => {

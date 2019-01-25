@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const bodyParser = require("body-parser");
 const logger = require("morgan");
-const Data = require("./data").user;
+const User = require("./data").user;
 const router = express.Router();
 
 const dbRoute = "mongodb://127.0.0.1:27017/user";
@@ -20,7 +20,7 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 //this is our get method
 //this method fetches all available data in our database
 router.get("/getProfiles", (req, res) => {
-    Data.find((err, data) => {
+    User.find((err, data) => {
         if (err) return res.json({ success: false, error: err });
         return res.json({ success: true, data: data });
     });
@@ -30,7 +30,7 @@ router.get("/getProfiles", (req, res) => {
 //this method fetches all available data in our database
 router.get("/getProfile", (req, res) => {
     const id = req.query.id;
-    Data.findById(id, (err, data) => {
+    User.findById(id, (err, data) => {
         if (err) return res.json({ success: false, error: err });
         return res.json({ success: true, data: data });
     });
@@ -46,12 +46,12 @@ router.post("/updateProfile", (req, res) => {
     let updateObj=update;
         //.catch((e) => {console.log(e);  return res.json({ success: false, error: err })});
     console.log('Update : '+JSON.stringify(updateObj));
-Data.findOneAndUpdate({_id:id}, updateObj, {new:true}, (err,doc) => {
+User.findOneAndUpdate({_id:id}, updateObj, {new:true}, (err,doc) => {
         if (err) return res.json({ success: false, error: err });
         if (!doc) {
             let newObj = updateObj;
             newObj._id=id;
-            Data.create(updateObj)
+            User.create(updateObj)
               .then((doc) => {return res.json({ success: true, mode:'created', data:JSON.stringify(doc)  });}); 
         }
         else {
@@ -63,7 +63,7 @@ Data.findOneAndUpdate({_id:id}, updateObj, {new:true}, (err,doc) => {
 //this is our create methid
 //this method adds new data in our database
 router.post("/registerProfile", (req, res) => {
-    let data = new Data();
+    let data = new User();
     console.log(JSON.stringify(req.body));
     const { id, pseudo,ethAccount, firstname, name } = req.body;
     /*if ((!id && id !== 0)) {
