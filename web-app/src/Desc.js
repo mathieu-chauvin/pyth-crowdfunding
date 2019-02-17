@@ -3,7 +3,10 @@ import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import {Table, List, Segment, Divider,Container,Card, Image, Icon, Button, Header } from 'semantic-ui-react';
-
+import Web3 from 'web3';
+var config = require('./config')
+var coinAbi = require('./abis/coinABI')
+var stockAbi = require('./abis/stockABI')
 var route = 'http://localhost:3001'
 const RowContributors = (props) => (
         <Table.Row>
@@ -48,7 +51,7 @@ class Desc extends Component {
     }
     
     componentDidMount() {
-
+        
         axios.get(route+'/api/project/getProject?id='+this.props.match.params.idProject)
             .then((res) => {
                 console.log('resProfile:'+JSON.stringify(res));
@@ -60,6 +63,30 @@ class Desc extends Component {
             });
 
         
+    }
+
+    getWeb3(){
+        // Modern DApp Browsers
+        let web3 = null;
+        if (window.ethereum) {
+            web3 = new Web3(window.ethereum);
+            try { 
+                window.ethereum.enable().then(function() {
+                    // User has allowed account access to DApp...
+                });
+            } catch(e) {
+                // User has denied account access to DApp...
+            }
+        }
+        // Legacy DApp Browsers
+        else if (window.web3) {
+            web3 = new Web3(web3.currentProvider);
+        }
+        // Non-DApp Browsers
+        else {
+            alert('You have to install MetaMask !');
+        }
+        return web3
     }
 
     addParticipant(){
@@ -78,19 +105,29 @@ class Desc extends Component {
     }
 
     addContributor(){
-        axios.post(route+'/api/project/addContributor', {
-            id : this.props.match.params.idProject,
-             contributor :this.context.web3.selectedAccount
-        })
-            .then((res) => {
-                console.log('res addPart:'+JSON.stringify(res));
-                 
-            }).catch(function (error) {
-                console.log(error);
+        // let web3 = new Web3(window.web3.currentProvider);
+        
+        let web3 = window.web3;
+        const coinC = web3.eth.contract(coinAbi).at(config.pythAddr);
+        const stockC = web3.eth.contract(stockAbi).at(config.stockAddr);
+        coinC.increaseAllowance(web3.eth.accounts[0],config.stockAddr,(err,res) =>  {
+            console.log('increase'+res+err);
+            stockC.addStake('0x'+this.props.match.params.idProject, 100,(err,res) =>  {
+            console.log('stakeadded'+res+err);
+                axios.post(route+'/api/project/addContributor', {
+                    id : this.props.match.params.idProject,
+                    contributor :this.context.web3.selectedAccount
+                })
+                    .then((res) => {
+                        console.log('res addPart:'+JSON.stringify(res));
+
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
             });
-
-
+        });
     }
+
 
 render() {
         return (

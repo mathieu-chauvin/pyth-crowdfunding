@@ -204,10 +204,10 @@ router.post("/getParticipants", (req, res) => {
         //.catch((e) => {console.log(e);  return res.json({ success: false, error: err })});
 Data.findById(id, (err,doc) => {
         if (err || !doc) return res.json({ success: false, error: err });
+        console.log('populated :'+JSON.stringify(doc.participants));
         doc.populate('participants',  (err, doc) => {
                 if (err || !doc) return res.json({ success: false, error: err });
-                console.log('populated :'+doc);
-            return res.json({ success: true,data:JSON.stringify(doc) });
+            return res.json({ success: true,data:JSON.stringify(doc.participants) });
             });
     });
 });
