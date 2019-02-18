@@ -11,26 +11,40 @@ class AddProject extends Component {
         this.state= {
             name:'',
             description:'',
+            img:null,
             submitted:false
         };
+        this.handleChangeImg = this.handleChangeImg.bind(this)
     }
 
 
-    handleChange = (e, { name, value }) => this.setState({ [name]: value });
+    handleChange = (e, { name, value }) => this.setState({ [name]: value }); 
+    
+    handleChangeImg(selectorFiles: FileList)
+    {
+        let file = selectorFiles[0];
+        if(file.type == "image/jpeg" || file.type == "image.png"){
+            console.log(file.name);
+            this.state.img = file;
+        }
+    }
 
     handleSubmit = () => {
         let updateObj = {
             name:this.state.name,
             description:this.state.description,
            owner: this.context.web3.selectedAccount
-       };
+        };
+        var bodyFormData = new FormData();
+        bodyFormData.append('image', this.state.img); 
+        bodyFormData.set('update',JSON.stringify(updateObj));
         axios({
            method: 'post',
           // headers : {'Content-Type': 'application/x-www-form-urlencoded'},
             url: route+'/api/project/updateProject',
-             data: {
-                     update:updateObj 
-             }}).then(()=>{
+            data: bodyFormData,
+            config: { headers: {'Content-Type': 'multipart/form-data' }}
+        }).then(()=>{
            this.setState({
                 submitted:true
            });
@@ -52,7 +66,8 @@ class AddProject extends Component {
            <Form onSubmit={this.handleSubmit}>
                 <Form.Field inline>Name : <Input onChange={this.handleChange} name='name' value={this.state.name}  /></Form.Field>
                 <Form.Field inline>Description : <TextArea onChange={this.handleChange} name='description' value={this.state.description}/></Form.Field>
-               <Form.Button type="submit">Submit</Form.Button> 
+                Image : <Input type="file" onChange={ (e) => this.handleChangeImg(e.target.files) } name="file" value={this.state.imgs} />
+                <Form.Button type="submit">Submit</Form.Button> 
             </Form>   
            </Container>
                   )

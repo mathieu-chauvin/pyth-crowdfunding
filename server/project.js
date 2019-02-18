@@ -108,7 +108,7 @@ router.get("/getProject", (req, res) => {
 //this method overwrites existing data in our database
 router.post("/updateProject", (req, res) => {
     console.log('body:'+JSON.stringify(req.body));
-    const { id, update} = req.body;
+    const { id, update} = req;
     let updateObj=update;
         //.catch((e) => {console.log(e);  return res.json({ success: false, error: err })});
     console.log('Update : '+JSON.stringify(updateObj));
