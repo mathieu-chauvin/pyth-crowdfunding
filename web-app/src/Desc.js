@@ -8,14 +8,19 @@ var config = require('./config')
 var coinAbi = require('./abis/coinABI')
 var stockAbi = require('./abis/stockABI')
 var route = 'http://localhost:3001'
-const RowContributors = (props) => (
-        <Table.Row>
-        <Table.Cell>{props.pseudo}</Table.Cell>
-        <Table.Cell>{props.firstName} {props.name}</Table.Cell>
-        <Table.Cell>{props.contribution} PTH</Table.Cell>
-        </Table.Row>
-)
+const RowContributors = (props) =>  {
+	if (props.contributor != null){
+		return(
 
+			<Table.Row>
+			<Table.Cell>{props.contributor.pseudo}</Table.Cell>
+			<Table.Cell>{props.contributor.firstName} {props.contributor.name}</Table.Cell>
+			<Table.Cell>{props.contributor.contribution} PTH</Table.Cell>
+			</Table.Row>
+		)
+	}
+	return (<Table.Row></Table.Row>)
+}
 const TableContributors = (props) => {
       return (
         <Table basic>
@@ -159,7 +164,8 @@ render() {
                     </Divider>
                 <List>
                 {this.state.project.participants.map( (p) => {
-                                                                return <List.Item>{p.name}</List.Item>
+                                                                return <List.Item>{p.pseudo} ({p.firstName} {p.name})
+			</List.Item>
                                                             })}
                     
                   </List>

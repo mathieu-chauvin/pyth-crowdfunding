@@ -70,7 +70,7 @@ async function getFullData (proj) {
            let contributor = proj.contributors[i]._id; 
             await contract.methods._stakes('0x'+projRes._id, contributor).call().then((res) => {
                console.log(JSON.stringify('c:'+res));
-                projRes.contributors[i] = {_id:contributor, name: proj.contributors[i].name, pseudo: proj.contributors[i].pseudo, firstName: proj.contributors[i].name, contribution:res};
+                projRes.contributors[i] = {_id:contributor, name: proj.contributors[i].name, pseudo: proj.contributors[i].pseudo, firstName: proj.contributors[i].firstName, contribution:res};
             });
 
         }
