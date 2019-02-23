@@ -3,6 +3,20 @@ import React, { Component } from 'react';
 import {Message, Header, Button, Form,Container,TextArea, Input} from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import ReactDOM from 'react-dom';
+
+// Require Editor JS files.
+import 'froala-editor/js/froala_editor.pkgd.min.js';
+
+// Require Editor CSS files.
+import 'froala-editor/css/froala_style.min.css';
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+
+// Require Font Awesome.
+import 'font-awesome/css/font-awesome.css';
+
+import FroalaEditor from 'react-froala-wysiwyg';
+
 var route = 'http://localhost:3001'
 
 class AddProject extends Component {
@@ -47,11 +61,12 @@ class AddProject extends Component {
              (<Message positive>
                     <p>New project successfully added</p>
                  </Message>) }
-
+<FroalaEditor tag='textarea'/>
         <Header as='h2'>Add a project</Header> 
            <Form onSubmit={this.handleSubmit}>
                 <Form.Field inline>Name : <Input onChange={this.handleChange} name='name' value={this.state.name}  /></Form.Field>
-                <Form.Field inline>Description : <TextArea onChange={this.handleChange} name='description' value={this.state.description}/></Form.Field>
+	                    <Form.Field inline>Description : <FroalaEditor tag='textarea'/>
+</Form.Field>
                <Form.Button type="submit">Submit</Form.Button> 
             </Form>   
            </Container>
