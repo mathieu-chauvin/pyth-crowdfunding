@@ -76,7 +76,6 @@ class AddProject extends Component {
              (<Message positive>
                     <p>New project successfully added</p>
                  </Message>) }
-<FroalaEditor tag='textarea'/>
         <Header as='h2'>Add a project</Header> 
            <Form onSubmit={this.handleSubmit}>
                 <Form.Field inline>Name : <Input onChange={this.handleChange} name='name' value={this.state.name}  /></Form.Field>
@@ -84,7 +83,6 @@ class AddProject extends Component {
 	    <Form.Field inline>Description : <FroalaEditor tag='textarea'/>
                 <Form.Button type="submit">Submit</Form.Button> 
 </Form.Field>
-               <Form.Button type="submit">Submit</Form.Button> 
             </Form>   
            </Container>
                   )
