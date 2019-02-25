@@ -15,7 +15,7 @@ import 'froala-editor/css/froala_editor.pkgd.min.css';
 // Require Font Awesome.
 import 'font-awesome/css/font-awesome.css';
 
-import FroalaEditor from 'react-froala-wysiwyg';
+import {FroalaEditorView, FroalaEditor} from 'react-froala-wysiwyg';
 
 var route = 'http://localhost:3001'
 
@@ -26,14 +26,20 @@ class AddProject extends Component {
             name:'',
             description:'',
             img:null,
-            submitted:false
+            submitted:false,
+		content:''
         };
+	this.handleModelChange = this.handleModelChange.bind(this);
         this.handleChangeImg = this.handleChangeImg.bind(this)
     }
 
 
     handleChange = (e, { name, value }) => this.setState({ [name]: value }); 
-    
+  handleModelChange(model) {
+    this.setState({
+      content: model
+    });
+  }  
     handleChangeImg(selectorFiles: FileList)
     {
         let file = selectorFiles[0];
@@ -42,6 +48,8 @@ class AddProject extends Component {
             this.state.img = file;
         }
     }
+
+
 
     handleSubmit = () => {
         let updateObj = {
@@ -80,10 +88,15 @@ class AddProject extends Component {
            <Form onSubmit={this.handleSubmit}>
                 <Form.Field inline>Name : <Input onChange={this.handleChange} name='name' value={this.state.name}  /></Form.Field>
                 Icône : <Input type="file" onChange={ (e) => this.handleChangeImg(e.target.files) } name="file" value={this.state.imgs} />
-	    <Form.Field inline>Description : <FroalaEditor tag='textarea'/>
+	    <Form.Field inline>Description : <FroalaEditor tag='textarea' model={this.state.content}
+  onModelChange={this.handleModelChange}/>
                 <Form.Button type="submit">Submit</Form.Button> 
 </Form.Field>
-            </Form>   
+            </Form>  
+
+<FroalaEditorView
+  model={this.state.content}
+/> 
            </Container>
                   )
                 }
