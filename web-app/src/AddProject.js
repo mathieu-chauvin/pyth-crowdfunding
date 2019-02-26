@@ -15,7 +15,8 @@ import 'froala-editor/css/froala_editor.pkgd.min.css';
 // Require Font Awesome.
 import 'font-awesome/css/font-awesome.css';
 
-import {FroalaEditorView, FroalaEditor} from 'react-froala-wysiwyg';
+import FroalaEditor from 'react-froala-wysiwyg';
+import FroalaEditorView from 'react-froala-wysiwyg/FroalaEditorView';
 
 var route = 'http://localhost:3001'
 
@@ -27,7 +28,7 @@ class AddProject extends Component {
             description:'',
             img:null,
             submitted:false,
-		content:''
+		description:''
         };
 	this.handleModelChange = this.handleModelChange.bind(this);
         this.handleChangeImg = this.handleChangeImg.bind(this)
@@ -37,7 +38,7 @@ class AddProject extends Component {
     handleChange = (e, { name, value }) => this.setState({ [name]: value }); 
   handleModelChange(model) {
     this.setState({
-      content: model
+      description: model
     });
   }  
     handleChangeImg(selectorFiles: FileList)
@@ -45,7 +46,7 @@ class AddProject extends Component {
         let file = selectorFiles[0];
         if(file.type == "image/jpeg" || file.type == "image.png"){
             console.log(file.name);
-            this.state.img = file;
+            this.setState({img: file});
         }
     }
 
@@ -85,22 +86,21 @@ class AddProject extends Component {
                     <p>New project successfully added</p>
                  </Message>) }
         <Header as='h2'>Add a project</Header> 
-           <Form onSubmit={this.handleSubmit}>
+           <Form onSubmit={this.handleSubmit} enctype="multipart/form-data">
                 <Form.Field inline>Name : <Input onChange={this.handleChange} name='name' value={this.state.name}  /></Form.Field>
-                Icône : <Input type="file" onChange={ (e) => this.handleChangeImg(e.target.files) } name="file" value={this.state.imgs} />
-	    <Form.Field inline>Description : <FroalaEditor tag='textarea' model={this.state.content}
-  onModelChange={this.handleModelChange}/>
-                <Form.Button type="submit">Submit</Form.Button> 
-</Form.Field>
+                <Form.Field inline>Description : <FroalaEditor tag='textarea' model={this.state.description}
+                onModelChange={this.handleModelChange}/></Form.Field>
+       
+                 Icône : <Input type="file" onChange={ (e) => this.handleChangeImg(e.target.files) } name="file" value={this.state.imgs} />
+	           <Form.Button type="submit">Submit</Form.Button> 
             </Form>  
-
-<FroalaEditorView
-  model={this.state.content}
-/> 
+ 
            </Container>
                   )
                 }
 }
+
+    /*  */
 AddProject.contextTypes = {
       web3: PropTypes.object
 };

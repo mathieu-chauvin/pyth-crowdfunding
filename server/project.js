@@ -7,6 +7,10 @@ const Data = bdd.project;
 const router = express.Router();
 const User = bdd.user;
 const config = require("./config");
+
+var multer  = require('multer')
+var upload = multer({ dest: 'uploads/' })
+
 var Web3 = require('web3')
 
 mongoose.connect(config.dbRoute,
@@ -106,10 +110,10 @@ router.get("/getProject", (req, res) => {
 
 //this is our update method
 //this method overwrites existing data in our database
-router.post("/updateProject", (req, res) => {
-    console.log('body:'+JSON.stringify(req.body));
-    const { id, update} = req;
-    let updateObj=update;
+router.post("/updateProject", upload.single('image'), (req, res) => {
+    console.log('body with multer:'+JSON.stringify(req.body));
+    const { id, update} = req.body;
+    let updateObj=JSON.parse(update);
         //.catch((e) => {console.log(e);  return res.json({ success: false, error: err })});
     console.log('Update : '+JSON.stringify(updateObj));
 Data.findOneAndUpdate({_id:id}, updateObj, {new:true}, (err,doc) => {
