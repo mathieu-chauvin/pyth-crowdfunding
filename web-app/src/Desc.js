@@ -4,7 +4,19 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import {Table, List, Segment, Divider,Container,Card, Image, Icon, Button, Header } from 'semantic-ui-react';
 import Web3 from 'web3';
-var config = require('./config')
+
+// Require Editor JS files.
+import 'froala-editor/js/froala_editor.pkgd.min.js';
+
+// Require Editor CSS files.
+import 'froala-editor/css/froala_style.min.css';
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+
+// Require Font Awesome.
+import 'font-awesome/css/font-awesome.css';
+
+import FroalaEditorView from 'react-froala-wysiwyg/FroalaEditorView';var config = require('./config')
+
 var coinAbi = require('./abis/coinABI')
 var stockAbi = require('./abis/stockABI')
 var route = 'http://localhost:3001'
@@ -155,8 +167,8 @@ render() {
                             Description
                         </Header>
                     </Divider>
-                    <p>{this.state.project.description}</p>
-                    <Divider horizontal>
+                    <FroalaEditorView model={this.state.project.description}/>                   
+                        <Divider horizontal>
                         <Header as='h4'>
                             <Icon name='tag' />
                           Participants 
