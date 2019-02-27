@@ -64,6 +64,7 @@ class Desc extends Component {
             }
         };
         this.addParticipant = this.addParticipant.bind(this);
+        this.removeParticipant = this.removeParticipant.bind(this);
         this.addContributor = this.addContributor.bind(this);
     }
     
@@ -112,14 +113,27 @@ class Desc extends Component {
              participant :this.context.web3.selectedAccount
         })
             .then((res) => {
-                console.log('res addPart:'+JSON.stringify(res));
-                 
+                window.location.reload(); 
             }).catch(function (error) {
                 console.log(error);
             });
 
 
     }
+removeParticipant(){
+        axios.post(route+'/api/project/removeParticipant', {
+            id : this.props.match.params.idProject,
+             participant :this.context.web3.selectedAccount
+        })
+            .then((res) => {
+                window.location.reload(); 
+            }).catch(function (error) {
+                console.log(error);
+            });
+
+
+    }
+
 
     addContributor(){
         // let web3 = new Web3(window.web3.currentProvider);
@@ -145,6 +159,15 @@ class Desc extends Component {
         });
     }
 
+    renderParticipateButton(){
+        console.log(JSON.stringify(this.state.project.participants)+'\n'+this.context.web3.selectedAccount)
+        if(this.state.project.participants.find((e)=>{return(e._id==this.context.web3.selectedAccount)}) == undefined){
+            return (<Button onClick={this.addParticipant} color ='green' ><Icon name='book'/>Participate</Button>);
+        }
+        else {
+            return (<Button onClick={this.removeParticipant} color ='green' ><Icon name='book'/>Abandon</Button>);
+        }
+    }
 
 render() {
         return (
@@ -158,8 +181,8 @@ render() {
                     <Divider/>
                 <Button.Group size='massive' widths='2'>
                         <Button onClick={this.addContributor} color='red' ><Icon name='money bill alternate'/>Make a deposit</Button>
-                        <Button onClick={this.addParticipant} color ='green' ><Icon name='book'/>Participate</Button>
-                     </Button.Group>
+                        {this.renderParticipateButton()}
+                    </Button.Group>
     
                         <Divider horizontal>
                         <Header as='h4'>
