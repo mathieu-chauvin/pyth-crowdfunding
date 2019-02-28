@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import {Table, List, Segment, Divider,Container,Card, Image, Icon, Button, Header } from 'semantic-ui-react';
+import {Input,Modal, Table, List, Segment, Divider,Container,Card, Image, Icon, Button, Header } from 'semantic-ui-react';
 import Web3 from 'web3';
 
 // Require Editor JS files.
@@ -16,7 +16,6 @@ import 'froala-editor/css/froala_editor.pkgd.min.css';
 import 'font-awesome/css/font-awesome.css';
 
 import FroalaEditorView from 'react-froala-wysiwyg/FroalaEditorView';var config = require('./config')
-
 var coinAbi = require('./abis/coinABI')
 var stockAbi = require('./abis/stockABI')
 var route = 'http://localhost:3001'
@@ -61,7 +60,9 @@ class Desc extends Component {
                 jackpot:"",
                 participants:[],
                 contributors:[]
-            }
+            },
+            amount : 0,
+            modalOpen:false
         };
         this.addParticipant = this.addParticipant.bind(this);
         this.removeParticipant = this.removeParticipant.bind(this);
@@ -83,6 +84,8 @@ class Desc extends Component {
         
     }
 
+    handleChange = (e, { name, value }) => this.setState({ [name]: value }); 
+    
     getWeb3(){
         // Modern DApp Browsers
         let web3 = null;
@@ -106,6 +109,7 @@ class Desc extends Component {
         }
         return web3
     }
+
 
     addParticipant(){
         axios.post(route+'/api/project/addParticipant', {
@@ -137,13 +141,13 @@ removeParticipant(){
 
     addContributor(){
         // let web3 = new Web3(window.web3.currentProvider);
-        
+       this.handleClose() 
         let web3 = window.web3;
         const coinC = web3.eth.contract(coinAbi).at(config.pythAddr);
         const stockC = web3.eth.contract(stockAbi).at(config.stockAddr);
-        coinC.increaseAllowance(web3.eth.accounts[0],config.stockAddr,(err,res) =>  {
-            console.log('increase'+res+err);
-            stockC.addStake('0x'+this.props.match.params.idProject, 100,(err,res) =>  {
+        coinC.increaseAllowance(config.stockAddr,this.state.amount,(err,res) =>  {
+            console.log('increase'+res+err+'amount'+this.state.amount);
+            stockC.addStake('0x'+this.props.match.params.idProject, this.state.amount, (err,res) =>  {
             console.log('stakeadded'+res+err);
                 axios.post(route+'/api/project/addContributor', {
                     id : this.props.match.params.idProject,
@@ -158,6 +162,10 @@ removeParticipant(){
             });
         });
     }
+
+  handleOpen = () => this.setState({ modalOpen: true })
+
+    handleClose = () => this.setState({ modalOpen: false })
 
     renderParticipateButton(){
         console.log(JSON.stringify(this.state.project.participants)+'\n'+this.context.web3.selectedAccount)
@@ -180,10 +188,36 @@ render() {
                     <i>Date of creation : </i><span className='date'>{this.state.project.date}</span>
                     <Divider/>
                 <Button.Group size='massive' widths='2'>
-                        <Button onClick={this.addContributor} color='red' ><Icon name='money bill alternate'/>Make a deposit</Button>
-                        {this.renderParticipateButton()}
+                    <Modal id='depositModal' trigger={<Button id='addContributorButton' onClick={this.handleOpen} color='red' ><Icon name='money bill alternate'/>Make a deposit</Button>
+                        } basic closeIcon
+                       
+        open={this.state.modalOpen}
+        onClose={this.handleClose} size='massive'>
+                        <Header icon='book' content='Make your deposit' />
+                        <Modal.Content>
+                            <p>
+                               Please enter the amount of your deposit : 
+                           </p>
+                           <Input name='amount' value={this.state.amount} onChange={this.handleChange}/>
+                           <Divider/>
+                           <p>
+                               <i>Tips:</i><br/>
+                               If you click on accept, 2 transactions will be displayed by MetaMask. You have to accept both of them, and then wait about 30 seconds for your order to be taken into account.
+                           </p>
+                        </Modal.Content>
+                        <Modal.Actions>
+                            <Button  onClick={this.handleClose} basic color='red' inverted>
+                                <Icon
+  name='remove' /> Cancel
+                            </Button>
+                            <Button color='green' onClick={this.addContributor} inverted>
+                                <Icon name='checkmark' /> Confirm
+                            </Button>
+                        </Modal.Actions>
+                    </Modal> 
+                    {this.renderParticipateButton()}
                     </Button.Group>
-    
+                      
                         <Divider horizontal>
                         <Header as='h4'>
                             <Icon name='tag' />
