@@ -5,6 +5,7 @@ import './App.css';
 import GridPro from './GridPro.js';
 import ProMenu from './ProMenu.js';
 import Profile from './Profile.js';
+import GetStarted from './GetStarted.js';
 import AddProject from './AddProject.js';
 import Desc from './Desc.js';
 import { Web3Provider } from 'react-web3';
@@ -32,6 +33,7 @@ return (
         <Router>
             <div className="app">
                 <ProMenu/>
+                <Route path='/get-started/' component={GetStarted}/>
                 <Web3Provider>
                 <Route exact path='/' component={HomePage}/>
                 <Route path='/profile/' component={Profile}/>
